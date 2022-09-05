@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Globalization;
-using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,11 +11,19 @@ namespace Project01
     /// </summary>
     public partial class MainWindow : Window
     {
-        private bool isCheck = false;
+        private MathF mathF = new MathF();
 
-        private bool isRad = false;
+        private bool buttonRadIsEnable = false;
+        private bool buttonRadIsLight = false;
 
         private double saveA = 0;
+
+        //Маркеры для кнопок с двумя операндами
+        private bool buttonXYIsEnable = false;
+        private bool buttonYkorenXIsEnable = false;
+        private bool buttonYXIsEnable = false;
+        private bool buttonLogYIsEnable = false;
+
 
         public MainWindow()
         {
@@ -76,25 +82,34 @@ namespace Project01
                         break;
 
                     case "x²":
-                        Output.Text = Math.Pow((Convert.ToDouble(Output.Text)), 2).ToString();
+                        Output.Text = Math.Pow(Convert.ToDouble(Output.Text), 2).ToString();
                         break;
                     case "x³":
                         Output.Text = Math.Pow(Convert.ToDouble(Output.Text), 3).ToString();
                         break;
 
                     case "xᵞ":
+                        RemoveMarker();
+                        buttonXYIsEnable = true;
+
                         saveA = Convert.ToDouble(Output.Text);
                         Output.Text = "";
+                        break;
 
-                        //Output.Text = VariableDegree(saveA, Convert.ToDouble(Output.Text)).ToString();
+                    case "yᵡ":
+                        RemoveMarker();
+                        buttonYXIsEnable = true;
+
+                        saveA = Convert.ToDouble(Output.Text);
+                        Output.Text = "";
                         break;
 
                     case "eᵡ":
-                        Output.Text = VariableDegree(Math.E, Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = mathF.VariableDegree(Math.E, Convert.ToDouble(Output.Text)).ToString();
                         break;
 
                     case "10ᵡ":
-                        Output.Text = VariableDegree(10, Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = mathF.VariableDegree(10, Convert.ToDouble(Output.Text)).ToString();
                         break;
 
                     case "1/x":
@@ -109,6 +124,22 @@ namespace Project01
                         Output.Text = Math.Pow(Convert.ToDouble(Output.Text), 1.0 / 3.0).ToString();
                         break;
 
+                    case "ᵞ√x":
+                        RemoveMarker();
+                        buttonYkorenXIsEnable = true;
+
+                        saveA = Convert.ToDouble(Output.Text);
+                        Output.Text = "";
+                        break;
+
+                    case "logᵧ":
+                        RemoveMarker();
+                        buttonLogYIsEnable = true;
+
+                        saveA = Convert.ToDouble(Output.Text);
+                        Output.Text = "";
+                        break;
+
                     case "ln":
                         Output.Text = Math.Log(Convert.ToDouble(Output.Text)).ToString();
                         break;
@@ -118,7 +149,7 @@ namespace Project01
                         break;
 
                     case "x!":
-                        Output.Text = Factorial(Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = mathF.Factorial(Convert.ToDouble(Output.Text)).ToString();
                         break;
 
                     case "sin":
@@ -151,7 +182,7 @@ namespace Project01
 
                     case "EE":
                         string a = Output.Text.Replace('.', ',');
-                        Output.Text = MathEE(a);
+                        Output.Text = mathF.EE(Convert.ToDouble(a));
                         break;
 
                     case "π":
@@ -159,24 +190,23 @@ namespace Project01
                         break;
 
                     case "Rand":
-                        Output.Text += Rnd().ToString().Replace(',', '.');
+                        Output.Text += mathF.Rnd().ToString().Replace(',', '.');
                         break;
 
                     case "Rad":
-                        isRad = true;
+                        buttonRadIsLight = true;
                         Rad.Text = "Rad";
                         btnRad.Content = "Deg";
                         break;
 
-
                     case "Deg":
                         Rad.Text = "";
                         btnRad.Content = "Rad";
-                        isRad = false;
+                        buttonRadIsLight = false;
                         break;
 
                     case "sin⁻¹":
-                        Output.Text = (Math.Asin(Convert.ToDouble(Output.Text.Replace('.', ','))) * 180 / Math.PI).ToString().Replace(',', '.'); 
+                        Output.Text = (Math.Asin(Convert.ToDouble(Output.Text.Replace('.', ','))) * 180 / Math.PI).ToString().Replace(',', '.');
                         break;
 
                     case "cos⁻¹":
@@ -189,22 +219,18 @@ namespace Project01
 
                     case "2ᵡ":
                         Output.Text = Math.Pow(2, Convert.ToDouble(Output.Text)).ToString();
-                        break;
-
-                    //case "logᵧ":
-                    //    Output.Text = Math.Log10(Convert.ToDouble(Output.Text)).ToString();
-                    //    break;
+                        break;                  
 
                     case "sinh⁻¹":
-                        Output.Text = Math.Log(Convert.ToDouble(Output.Text) + Math.Sqrt(Math.Pow(Convert.ToDouble(Output.Text), 2) + 1)).ToString();
+                        Output.Text = mathF.ArcSinH(Convert.ToDouble(Output.Text)).ToString();
                         break;
 
                     case "cosh⁻¹":
-                        Output.Text = Math.Log(Convert.ToDouble(Output.Text) + Math.Sqrt(Math.Pow(Convert.ToDouble(Output.Text), 2) - 1)).ToString();
+                        Output.Text = mathF.ArcCosH(Convert.ToDouble(Output.Text)).ToString();
                         break;
 
                     case "tanh⁻¹":
-                        Output.Text = (Math.Log(Convert.ToDouble(Output.Text) + Math.Sqrt(Math.Pow(Convert.ToDouble(Output.Text), 2) + 1)) * (Convert.ToDouble(Output.Text) / Math.Sqrt(1 - Math.Pow(Convert.ToDouble(Output.Text), 2)))).ToString();
+                        Output.Text = mathF.ArcTanH(Convert.ToDouble(Output.Text)).ToString();
                         break;
 
                     case "log₂":
@@ -219,17 +245,58 @@ namespace Project01
             }
         }
 
+        private void RemoveMarker()
+        {
+            buttonXYIsEnable = false;
+            buttonYkorenXIsEnable = false;
+            buttonYXIsEnable = false;
+            buttonLogYIsEnable = false;
+        }
+
         private void Result()
         {
-            string answer = new DataTable().Compute(Output.Text, null).ToString().Replace(',', '.');
-            Output.Text = answer;
+            try
+            {
+                if (!buttonXYIsEnable && !buttonYkorenXIsEnable && !buttonYXIsEnable && !buttonLogYIsEnable)
+                {
+                    string answer = new DataTable().Compute(Output.Text, null).ToString().Replace(',', '.');
+                    Output.Text = answer;
+                }
+
+                if (buttonXYIsEnable)
+                {
+                    Output.Text = Math.Pow(saveA, Convert.ToDouble(Output.Text)).ToString();
+                }
+
+                if (buttonYXIsEnable)
+                {
+                    Output.Text = Math.Pow(Convert.ToDouble(Output.Text), saveA).ToString();
+                }
+
+                if (buttonYkorenXIsEnable)
+                {
+                    Output.Text = Math.Pow(saveA, 1 / Convert.ToDouble(Output.Text)).ToString();
+                }
+
+                if (buttonLogYIsEnable)
+                {
+                    Output.Text = Math.Log(saveA, Convert.ToDouble(Output.Text)).ToString();
+                }
+
+                RemoveMarker();
+            }
+            catch (Exception)
+            {
+                Output.Text = "Ошибка";
+            }
+
         }
 
         private void Replace2nd()
         {
-            if (!isCheck)
+            if (!buttonRadIsEnable)
             {
-                isCheck = true;
+                buttonRadIsEnable = true;
 
                 button2nd.Background = Brushes.Gray;
                 button2nd.Foreground = Brushes.Black;
@@ -247,7 +314,7 @@ namespace Project01
             }
             else
             {
-                isCheck = false;
+                buttonRadIsEnable = false;
 
                 var bc = new BrushConverter();
                 button2nd.Background = (Brush)bc.ConvertFrom("#212121");
@@ -278,42 +345,6 @@ namespace Project01
             if (Output.Text[0] == '-')
                 if (Output.Text[1] == '0' && (Output.Text.IndexOf(",") != 2))
                     Output.Text = Output.Text.Remove(1, 1);
-        }
-
-        private double VariableDegree(double x, double y)
-        {
-            return Math.Pow(x, y);
-        }
-
-        public BigInteger Factorial(double n)
-        {
-            var factorial = new BigInteger(1);
-            for (int i = 1; i <= n; i++)
-                factorial *= i;
-
-            return factorial;
-        }
-
-        public string MathEE(string valueString)
-        {
-            double a = Convert.ToDouble(valueString);
-            string[] str = a.ToString(new NumberFormatInfo() { NumberDecimalSeparator = "." }).Split('.');
-            int comma = (str.Length == 2 ? str[1].Length : 0) - 3;
-
-            for (int i = 0; i < comma; i++)
-            {
-                valueString = valueString.Remove(valueString.Length - 1);
-            }
-
-            return valueString.Replace(',', '.') + " " + "*" + " " + "10^" + comma;
-        }
-
-        public double Rnd()
-        {
-            Random rnd = new Random();
-            double d = Math.Round(0.1 + rnd.NextDouble() * 0.89, 13);
-
-            return d;
         }
 
     }
