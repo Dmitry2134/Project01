@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,6 +14,7 @@ namespace Project01
     {
         private MathF mathF = new MathF();
 
+        //Маркер для Rad и Deg c подсветкой
         private bool buttonRadIsEnable = false;
         private bool buttonRadIsLight = false;
 
@@ -24,6 +26,8 @@ namespace Project01
         private bool buttonYXIsEnable = false;
         private bool buttonLogYIsEnable = false;
 
+        //Память
+        private double memory = 0;
 
         public MainWindow()
         {
@@ -50,7 +54,61 @@ namespace Project01
                 switch (contentButton)
                 {
                     default:
-                        Output.Text += contentButton;
+                        if(Output.Text == "0" || Output.Text == "не число" || Output.Text == "Ошибка")                          
+                            Output.Text = contentButton;
+                        else
+                            Output.Text += contentButton;
+                        break;
+
+                    case "+":
+                        if(!CheckingSign())
+                            Output.Text += contentButton;
+                        break;
+
+                    case "-":
+                        if (!CheckingSign())
+                            Output.Text += contentButton;
+                        break;
+
+                    case "÷":
+                        if (!CheckingSign())
+                            Output.Text += "/";
+                        break;
+
+                    case "×":
+                        if (!CheckingSign())
+                            Output.Text += "*";
+                        break;
+
+                    case ".":
+                        if (Output.Text.EndsWith("0") || !CheckingSign() || Output.Text.EndsWith("."))
+                            Output.Text += ".";
+                        else
+                            Output.Text += ".";
+                        break;
+
+                    case "mc":
+                        memory = 0;
+                        break;
+
+                    case "m+":
+                        memory += Convert.ToDouble(Output.Text);
+                        break;
+
+                    case "m-":
+                        memory -= Convert.ToDouble(Output.Text);
+                        break;
+
+                    case "mr":
+                        if(CheckingSign())
+                        {
+                            Output.Text += memory.ToString();
+                        }
+                        else
+                        {
+                            Output.Text = memory.ToString();
+                        }
+                        
                         break;
 
                     case "2nd":
@@ -61,20 +119,24 @@ namespace Project01
                         if (Output.Text != "")
                             Output.Text = (Convert.ToDouble(Output.Text) / 100).ToString();
                         break;
-
-                    case "÷":
-                        Output.Text += "/";
-                        break;
+       
 
                     case "AC":
-                        Output.Text = "";
+                        Output.Text = "0";
                         break;
+                   
+                    case "±":                      
 
-                    case "×":
-                        Output.Text += "*";
-                        break;
-
-                    case "±":
+                        if (Output.Text != "0")
+                        {
+                            if (Output.Text.Split('\n').Select(s => s.First()).ToString() != "-" || Output.Text.ToCharArray()[0].ToString() != "-")
+                            {
+                                if (Convert.ToDouble(Output.Text) > 0)
+                                    Output.Text = "- " + Output.Text;
+                                else
+                                    Output.Text = "+ " + Output.Text;
+                            }
+                        }
                         break;
 
                     case "=":
@@ -153,27 +215,27 @@ namespace Project01
                         break;
 
                     case "sin":
-                        Output.Text = Math.Sin(Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = Math.Sin(Convert.ToDouble(Output.Text.Replace('.', ','))).ToString().Replace(",", ".");
                         break;
 
                     case "cos":
-                        Output.Text = Math.Cos(Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = Math.Cos(Convert.ToDouble(Output.Text.Replace('.', ','))).ToString().Replace(",", ".");
                         break;
 
                     case "tan":
-                        Output.Text = Math.Tan(Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = Math.Tan(Convert.ToDouble(Output.Text.Replace('.', ','))).ToString().Replace(",", ".");
                         break;
 
                     case "sinh":
-                        Output.Text = Math.Sinh(Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = Math.Sinh(Convert.ToDouble(Output.Text.Replace('.', ','))).ToString().Replace(",", ".");
                         break;
 
                     case "cosh":
-                        Output.Text = Math.Cosh(Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = Math.Cosh(Convert.ToDouble(Output.Text.Replace('.', ','))).ToString().Replace(",", ".");
                         break;
 
                     case "tanh":
-                        Output.Text = Math.Tanh(Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = Math.Tanh(Convert.ToDouble(Output.Text.Replace('.', ','))).ToString();
                         break;
 
                     case "e":
@@ -222,15 +284,15 @@ namespace Project01
                         break;                  
 
                     case "sinh⁻¹":
-                        Output.Text = mathF.ArcSinH(Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = mathF.ArcSinH(Convert.ToDouble(Output.Text.Replace('.', ','))).ToString().Replace(',', '.');
                         break;
 
                     case "cosh⁻¹":
-                        Output.Text = mathF.ArcCosH(Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = mathF.ArcCosH(Convert.ToDouble(Output.Text.Replace('.', ','))).ToString().Replace(',', '.');
                         break;
 
                     case "tanh⁻¹":
-                        Output.Text = mathF.ArcTanH(Convert.ToDouble(Output.Text)).ToString();
+                        Output.Text = mathF.ArcTanH(Convert.ToDouble(Output.Text.Replace('.', ','))).ToString().Replace(',', '.');
                         break;
 
                     case "log₂":
@@ -345,6 +407,14 @@ namespace Project01
             if (Output.Text[0] == '-')
                 if (Output.Text[1] == '0' && (Output.Text.IndexOf(",") != 2))
                     Output.Text = Output.Text.Remove(1, 1);
+        }
+
+        private bool CheckingSign()
+        {
+            if (Output.Text.EndsWith("+") || Output.Text.EndsWith("-") || Output.Text.EndsWith("/") || Output.Text.EndsWith("*") || Output.Text == "не число" || Output.Text == "Ошибка")
+                return true;
+            else
+                return false;
         }
 
     }

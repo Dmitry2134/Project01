@@ -50,7 +50,7 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="Output" FontFamily="SFProDisplay-Regular.ttf" Text="" Margin="0,15,20,0" Grid.Row="0" Grid.ColumnSpan="10" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="52" />
+        <TextBlock x:Name="Output" FontFamily="SFProDisplay-Regular.ttf" Text="0" Margin="0,15,20,0" Grid.Row="0" Grid.ColumnSpan="10" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="52" />
 
         <TextBlock Margin="26,50,0,0" x:Name="Rad" Text="" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="20" />
 
