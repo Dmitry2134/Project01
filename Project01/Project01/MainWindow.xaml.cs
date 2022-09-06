@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -25,6 +24,9 @@ namespace Project01
         private bool buttonYkorenXIsEnable = false;
         private bool buttonYXIsEnable = false;
         private bool buttonLogYIsEnable = false;
+
+        //Маркер на точку
+        private bool buttonDotIsEnabled = false;
 
         //Память
         private double memory = 0;
@@ -54,14 +56,14 @@ namespace Project01
                 switch (contentButton)
                 {
                     default:
-                        if(Output.Text == "0" || Output.Text == "не число" || Output.Text == "Ошибка")                          
+                        if (Output.Text == "0" || Output.Text == "не число" || Output.Text == "Ошибка")
                             Output.Text = contentButton;
                         else
                             Output.Text += contentButton;
                         break;
 
                     case "+":
-                        if(!CheckingSign())
+                        if (!CheckingSign())
                             Output.Text += contentButton;
                         break;
 
@@ -81,10 +83,10 @@ namespace Project01
                         break;
 
                     case ".":
-                        if (Output.Text.EndsWith("0") || !CheckingSign() || Output.Text.EndsWith("."))
-                            Output.Text += ".";
-                        else
-                            Output.Text += ".";
+                        if(!buttonDotIsEnabled)
+                        Output.Text += ".";
+
+                        buttonDotIsEnabled = true;
                         break;
 
                     case "mc":
@@ -100,7 +102,7 @@ namespace Project01
                         break;
 
                     case "mr":
-                        if(CheckingSign())
+                        if (CheckingSign())
                         {
                             Output.Text += memory.ToString();
                         }
@@ -108,7 +110,7 @@ namespace Project01
                         {
                             Output.Text = memory.ToString();
                         }
-                        
+
                         break;
 
                     case "2nd":
@@ -119,28 +121,23 @@ namespace Project01
                         if (Output.Text != "")
                             Output.Text = (Convert.ToDouble(Output.Text) / 100).ToString();
                         break;
-       
+
 
                     case "AC":
                         Output.Text = "0";
-                        break;
-                   
-                    case "±":                      
 
-                        if (Output.Text != "0")
-                        {
-                            if (Output.Text.Split('\n').Select(s => s.First()).ToString() != "-" || Output.Text.ToCharArray()[0].ToString() != "-")
-                            {
-                                if (Convert.ToDouble(Output.Text) > 0)
-                                    Output.Text = "- " + Output.Text;
-                                else
-                                    Output.Text = "+ " + Output.Text;
-                            }
-                        }
+                        buttonDotIsEnabled = false;
+                        break;
+
+                    case "±":
+                        if(!CheckingSign())
+                        Output.Text = (Convert.ToDouble(Output.Text) * (-1)).ToString();
                         break;
 
                     case "=":
                         Result();
+
+                        buttonDotIsEnabled = false;
                         break;
 
                     case "x²":
@@ -281,7 +278,7 @@ namespace Project01
 
                     case "2ᵡ":
                         Output.Text = Math.Pow(2, Convert.ToDouble(Output.Text)).ToString();
-                        break;                  
+                        break;
 
                     case "sinh⁻¹":
                         Output.Text = mathF.ArcSinH(Convert.ToDouble(Output.Text.Replace('.', ','))).ToString().Replace(',', '.');
